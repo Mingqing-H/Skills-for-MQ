@@ -27,8 +27,8 @@
 ### 下载全部 Skills
 
 ```bash
-git clone https://github.com/Mingqing-H/mingqing_skills.git
-cd mingqing_skills
+git clone https://github.com/Mingqing-H/Skills-for-MQ.git
+cd Skills-for-MQ
 ```
 
 安装到 Codex 的本地 Skills 目录：
@@ -56,8 +56,8 @@ cp -R extract-md writing-style-learner html-beautiful-output memory-learning-car
 如果只想下载单个目录，推荐使用 Git sparse checkout。例如只下载 `memory-learning-cards`：
 
 ```bash
-git clone --filter=blob:none --sparse https://github.com/Mingqing-H/mingqing_skills.git
-cd mingqing_skills
+git clone --filter=blob:none --sparse https://github.com/Mingqing-H/Skills-for-MQ.git
+cd Skills-for-MQ
 git sparse-checkout set memory-learning-cards
 ```
 
