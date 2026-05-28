@@ -1,0 +1,4 @@
+interface:
+  display_name: "HaoWallpaper Direct"
+  short_description: "Fast direct wallpaper metadata fetch"
+  default_prompt: "Use $haowallpaper-direct to fetch metadata and public image links from a haowallpaper URL or keyword."
