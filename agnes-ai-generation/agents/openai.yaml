@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agnes AI Generation"
+  short_description: "Use the Agnes API when explicitly requested"
+  default_prompt: "Use Agnes AI to generate or edit an image or video from my prompt."

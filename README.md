@@ -6,8 +6,8 @@
 
 - **面向真实任务设计**：每个 Skill 都有明确触发场景、处理步骤和输出要求，减少 Agent 临场发挥造成的不稳定。
 - **脚本 + Prompt 协同**：需要确定性执行的部分交给 Python 脚本，判断、规划、解释和生成交给 Agent。
-- **强调产物质量**：不仅能“完成任务”，还关注可读性、可复用性、移动端适配、交互体验和用户反馈。
-- **覆盖多模态工作流**：文本清洗、写作风格学习、HTML 可视化、记忆卡片、图片生成、语音合成、壁纸数据抓取。
+- **强调产物质量**：不仅能”完成任务”，还关注可读性、可复用性、移动端适配、交互体验和用户反馈。
+- **覆盖多模态工作流**：文本清洗、写作风格学习、HTML 可视化、记忆卡片、图片生成、语音合成、壁纸数据抓取、微信公众号排版与制作、AI 图片视频生成。
 - **安全意识**：仓库不应提交真实密钥；需要 API 的 Skill 使用本地 `config.json` 或环境变量配置。
 
 ## Skills 一览
@@ -21,6 +21,9 @@
 | [`image-gen-moda`](./image-gen-moda) | 调用 ModelScope 文生图模型生成本地图片 | API 集成、异步轮询、图片生成 |
 | [`mimo-tts`](./mimo-tts) | 调用小米 MiMo V2.5 TTS 生成语音、设计声音、克隆声音 | TTS、音频生成、OpenAI-compatible API |
 | [`haowallpaper-direct`](./haowallpaper-direct) | 无浏览器抓取 HaoWallpaper 壁纸信息和公开媒体链接 | SSR 解析、数据抽取、批量下载 |
+| [`wechat-article-layout`](./wechat-article-layout) | 将文章转换为微信公众号排版 HTML，支持样式预设和 SVG 交互 | 微信排版、HTML 片段、样式预设、SVG 动效 |
+| [`wechat-article-production`](./wechat-article-production) | 端到端微信公众号文章制作：选题、写作、配图、评审、HTML | 爆款文、视觉规划、素材管理、评审迭代 |
+| [`agnes-ai-generation`](./agnes-ai-generation) | 调用 Agnes AI API 生成图片和视频 | 文生图、图生图、文生视频、图生视频、关键帧动画 |
 
 ## 如何下载和安装
 
@@ -42,13 +45,16 @@ Copy-Item -Recurse .\memory-learning-cards "$env:USERPROFILE\.codex\skills\"
 Copy-Item -Recurse .\image-gen-moda "$env:USERPROFILE\.codex\skills\"
 Copy-Item -Recurse .\mimo-tts "$env:USERPROFILE\.codex\skills\"
 Copy-Item -Recurse .\haowallpaper-direct "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\wechat-article-layout "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\wechat-article-production "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\agnes-ai-generation "$env:USERPROFILE\.codex\skills\"
 ```
 
 macOS / Linux 可使用：
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -R extract-md writing-style-learner html-beautiful-output memory-learning-cards image-gen-moda mimo-tts haowallpaper-direct ~/.codex/skills/
+cp -R extract-md writing-style-learner html-beautiful-output memory-learning-cards image-gen-moda mimo-tts haowallpaper-direct wechat-article-layout wechat-article-production agnes-ai-generation ~/.codex/skills/
 ```
 
 ### 只下载某一个 Skill
@@ -73,6 +79,9 @@ Copy-Item -Recurse .\memory-learning-cards "$env:USERPROFILE\.codex\skills\"
 git sparse-checkout set mimo-tts
 git sparse-checkout set html-beautiful-output
 git sparse-checkout set haowallpaper-direct
+git sparse-checkout set wechat-article-layout
+git sparse-checkout set wechat-article-production
+git sparse-checkout set agnes-ai-generation
 ```
 
 也可以在 GitHub 页面点击 **Code → Download ZIP** 下载整个仓库，解压后只保留自己需要的那个 Skill 文件夹。把对应 Skill 文件夹复制到该客户端要求的 Skills 目录中。核心原则是：一个 Skill 保持一个完整文件夹，里面的 `SKILL.md`、`scripts/`、`references/` 等文件不要拆开。
@@ -88,6 +97,9 @@ git sparse-checkout set haowallpaper-direct
 | `image-gen-moda` | 是 | 需要 Python 和 `requests`，以及 ModelScope API Key |
 | `mimo-tts` | 是 | 需要 Python 和 `openai`；`numpy`、`soundfile` 用于可选音频处理 |
 | `haowallpaper-direct` | 是 | 使用 Python 标准库完成页面解析和下载，无浏览器自动化依赖 |
+| `wechat-article-layout` | 否 | 输出自包含 HTML 片段，无构建步骤 |
+| `wechat-article-production` | 是 | 需要 Python 用于 HTML 渲染脚本；其他增强功能（AI 新闻、风格学习、排版、图片生成）均为可选 |
+| `agnes-ai-generation` | 是 | 需要 Python 和 `requests`，以及 Agnes API Key |
 
 ## Skill 说明
 
@@ -192,6 +204,66 @@ python scripts/haowallpaper_direct.py search "flower" --sources home,mobile,foru
 python scripts/haowallpaper_direct.py search "flower" --sources mobile --media video --download ./live-wallpapers
 ```
 
+### wechat-article-layout
+
+`wechat-article-layout` 将文章草稿（Markdown、TXT、HTML）转换为可直接粘贴到微信公众号编辑器的 HTML 片段。它不改写原文，只优化排版、间距、视觉层次、色彩、边框、背景和图片占位符展示。支持样式预设（如简洁、科技感、杂志感）和可选的 SVG 交互层（数据动画、聊天模拟、滚动触发效果）。
+
+它体现的是**微信排版和信息设计能力**：Skill 内置了样式预设库、SVG 交互模式、微信兼容性规则和文本保真验证，让 Agent 可以把普通文章快速转换成视觉精美、移动端友好的公众号排版。
+
+典型请求：
+
+```text
+帮我把这篇文章排版成公众号样式。
+用科技感风格给这篇 Markdown 做微信排版。
+给这篇数据报告加上 SVG 动画效果。
+```
+
+### wechat-article-production
+
+`wechat-article-production` 提供端到端的微信公众号文章制作工作流：从选题开始，进行资料研究、风格分析、视觉分镜规划、文案撰写、素材下载/生成、数据图表制作、评审打分、迭代优化，最终产出可发布的完整文章包。支持学习和应用特定作者风格，可选生成公众号 HTML 导入版。
+
+它体现的是**内容工程和全流程管控能力**：Skill 把选题深挖、事实核查、风格迁移、视觉规划、素材管理、质量评审等环节串联成标准化流程，配合可选的辅助 Skill（风格学习、AI 新闻、排版美化、图片生成），让 Agent 可以独立完成从想法到成品的完整闭环。
+
+典型请求：
+
+```text
+帮我写一篇关于 AI 编程助手的公众号文章。
+用这个作者的风格写一篇关于大模型价格战的深度分析。
+帮我把这个选题做成完整的公众号文章包，包括配图和评审报告。
+```
+
+默认产出物：
+
+- 文章 Markdown：`文案创作/（YYYYMMDD）标题.md`
+- 图片素材文件夹：`图片素材/YYYYMMDD/`
+- 素材清单：`图片素材/YYYYMMDD/素材清单.md`
+- 评审报告：`文案创作/（YYYYMMDD）标题-评审报告.md`
+- 可选 HTML（仅用户要求时）：`文案创作/（YYYYMMDD）标题-公众号导入版.html`
+
+### agnes-ai-generation
+
+`agnes-ai-generation` 通过 Agnes AI API 生成图片和视频，支持文生图、图生图、多图合成、文生视频、图生视频、关键帧动画等功能。脚本封装了 API 调用、异步轮询、本地文件保存等流程，并提供提示词优化指南和故障排查参考。
+
+它体现的是**多模态 AI 生成和 API 集成能力**：Skill 把 Agnes API 的认证、参数、轮询、错误处理、输出管理等细节封装成可执行脚本，配合丰富的参考文档（API 参考、提示词指南、密钥配置、故障排查），让 Agent 可以稳定地完成从文本描述到图片/视频资产的生成。
+
+示例：
+
+```bash
+# 文生图
+python scripts/agnes_image.py --prompt "A luminous floating city above a misty canyon at sunrise" --size 1024x768
+
+# 图生图
+python scripts/agnes_image.py --prompt "Make the object matte black" --image input.png
+
+# 文生视频
+python scripts/agnes_video.py --prompt "A cinematic shot of a cat walking on the beach" --num-frames 121 --frame-rate 24
+
+# 图生视频
+python scripts/agnes_video.py --prompt "Animate the character with subtle breathing motion" --image https://example.com/input.png
+```
+
+使用前需要配置 Agnes API Key。推荐使用环境变量 `AGNES_API_KEY`，不要提交真实密钥。
+
 ## 目录结构
 
 ```text
@@ -215,15 +287,26 @@ python scripts/haowallpaper_direct.py search "flower" --sources mobile --media v
 │   ├── config.json
 │   ├── references/
 │   └── scripts/
-└── haowallpaper-direct/
+├── haowallpaper-direct/
+│   ├── SKILL.md
+│   ├── agents/
+│   └── scripts/
+├── wechat-article-layout/
+│   ├── SKILL.md
+│   └── references/
+├── wechat-article-production/
+│   ├── SKILL.md
+│   ├── references/
+│   └── scripts/
+└── agnes-ai-generation/
     ├── SKILL.md
-    ├── agents/
+    ├── references/
     └── scripts/
 ```
 
 ## 配置和安全
 
-- `image-gen-moda` 和 `mimo-tts` 需要 API Key。请使用自己的本地配置或环境变量。
+- `image-gen-moda`、`mimo-tts` 和 `agnes-ai-generation` 需要 API Key。请使用自己的本地配置或环境变量。
 - 不建议把真实密钥提交到公开仓库。公开作品集里应只保留占位符、示例配置或说明文档。
 - `haowallpaper-direct` 只解析公开页面和公开媒体链接，不应尝试绕过受保护接口。
 

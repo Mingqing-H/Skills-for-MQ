@@ -1,0 +1,7 @@
+interface:
+  display_name: "WeChat Article Layout"
+  short_description: "将公众号文稿排成编辑器可用 HTML 片段"
+  default_prompt: "Use $wechat-article-layout to turn this article into WeChat-ready HTML while preserving all visible text exactly."
+
+policy:
+  allow_implicit_invocation: true
