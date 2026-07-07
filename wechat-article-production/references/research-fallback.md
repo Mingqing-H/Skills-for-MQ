@@ -1,4 +1,4 @@
-# Research Fallback
+﻿# Research Fallback
 
 Use this when specialized AI-news skills are unavailable or insufficient.
 
@@ -10,6 +10,18 @@ Use this when specialized AI-news skills are unavailable or insufficient.
 4. Reliable media with dates and named sources.
 5. Social posts only as sentiment or primary-person statements; verify elsewhere when possible.
 
+
+## Source Density Targets
+
+Use enough sources and material anchors to make the article feel worth reading, not just plausible.
+
+- Short explainers under 1500 Chinese characters: usually 4-6 credible sources or material anchors.
+- 1500-3000 Chinese characters: usually 6-10 credible sources or material anchors.
+- 3000-5000 Chinese characters: usually 10-16 credible sources or material anchors.
+- 5000+ Chinese characters: usually 16+ credible sources or material anchors, or split the topic.
+- For every major claim cluster, include at least one visible supporting material: source quote, dated fact, chart, page capture, product/interface image, report excerpt, table, or case link.
+- Prefer fewer high-quality primary sources over many weak links, but avoid writing long argument chains with no reader-visible evidence.
+- Record which sources can become visual materials: chart, screenshot, interface, product image, report table, announcement page, quote card, or background-only citation.
 ## Research Pack Format
 
 For each source, record:
@@ -19,7 +31,8 @@ For each source, record:
 - `url`
 - `date`: publication/update date
 - `claim_supported`
-- `use_in_article`: fact, quote, image, background, or counterpoint
+- `use_in_article`: fact, quote, image, chart, page capture, material callout, background, or counterpoint
+- `visible_anchor`: whether this source should appear as a reader-visible citation, image, chart, screenshot, quote, or material card
 
 ## Handling Uncertainty
 

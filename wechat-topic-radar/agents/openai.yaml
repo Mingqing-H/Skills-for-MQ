@@ -1,0 +1,4 @@
+interface:
+  display_name: "公众号选题雷达"
+  short_description: "抓取多平台热点新闻，筛出可写的公众号选题"
+  default_prompt: "Use $wechat-topic-radar to find today's best WeChat public account topics from hot lists and news."

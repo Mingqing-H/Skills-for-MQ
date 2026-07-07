@@ -1,0 +1,4 @@
+interface:
+  display_name: "海报提示词工作室"
+  short_description: "用八种经典构图与多类题材模块生成可直接使用的专业海报提示词"
+  default_prompt: "使用 $craft-poster-prompts 为我的海报选择合适构图并生成可直接用于生图模型的提示词。"

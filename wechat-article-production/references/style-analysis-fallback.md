@@ -1,9 +1,11 @@
 # Style Analysis Fallback
 
-Use this when a dedicated writing-style skill is unavailable.
+Use this after the user selects a writing style, or when a dedicated writing-style skill is unavailable.
 
 ## Inputs
 
+- Selected style from `style-selection.md`: use it as the primary constraint.
+- Reference links chosen by the user: inspect accessible originals when available.
 - Existing style profile: read and use it.
 - Multiple samples: inspect at least 3 when possible.
 - Single sample: warn internally that confidence is lower and avoid overfitting.
@@ -29,7 +31,9 @@ Use this when a dedicated writing-style skill is unavailable.
 
 When reporting style use, summarize:
 
+- `selected_style`
 - `style_source`
+- `reference_links_used`
 - `usable_traits`
 - `traits_to_avoid`
 - `adaptation_decision`
