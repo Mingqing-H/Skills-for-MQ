@@ -7,7 +7,7 @@
 - **面向真实任务设计**：每个 Skill 都有明确触发场景、处理步骤和输出要求，减少 Agent 临场发挥造成的不稳定。
 - **脚本 + Prompt 协同**：需要确定性执行的部分交给 Python 脚本，判断、规划、解释和生成交给 Agent。
 - **强调产物质量**：不仅能”完成任务”，还关注可读性、可复用性、移动端适配、交互体验和用户反馈。
-- **覆盖多模态工作流**：文本清洗、写作风格学习、HTML 可视化、记忆卡片、图片生成、语音合成、壁纸数据抓取、微信公众号排版与制作、AI 图片视频生成。
+- **覆盖多模态工作流**：文本清洗、写作风格学习、HTML 可视化、记忆卡片、图片生成、语音合成、壁纸数据抓取、微信公众号排版与制作、AI 图片视频生成、海报设计提示词、中文正文配图、公众号选题发现。
 - **安全意识**：仓库不应提交真实密钥；需要 API 的 Skill 使用本地 `config.json` 或环境变量配置。
 
 ## Skills 一览
@@ -24,6 +24,10 @@
 | [`wechat-article-layout`](./wechat-article-layout) | 将文章转换为微信公众号排版 HTML，支持样式预设和 SVG 交互 | 微信排版、HTML 片段、样式预设、SVG 动效 |
 | [`wechat-article-production`](./wechat-article-production) | 端到端微信公众号文章制作：选题、写作、配图、评审、HTML | 爆款文、视觉规划、素材管理、评审迭代 |
 | [`agnes-ai-generation`](./agnes-ai-generation) | 调用 Agnes AI API 生成图片和视频 | 文生图、图生图、文生视频、图生视频、关键帧动画 |
+| [`craft-poster-prompts`](./craft-poster-prompts) | 创建专业 AI 海报设计提示词，内置 8 种构图系统和场景模块 | 海报设计、构图模板、提示词工程 |
+| [`gpt-image-2`](./gpt-image-2) | 通过本地 Codex CLI 调用 GPT Image 2 生成和编辑图片 | ChatGPT 图片、文生图、图编辑、风格迁移 |
+| [`mq-folded-page-illustrations`](./mq-folded-page-illustrations) | 生成 MQ 专属风格的中文正文配图，使用"折页员"IP 形象 | 手绘解释图、正文配图、折页员 IP |
+| [`wechat-topic-radar`](./wechat-topic-radar) | 从热搜和新闻中发现并排名微信公众号选题 | 选题发现、热点追踪、内容策划 |
 
 ## 如何下载和安装
 
@@ -48,13 +52,17 @@ Copy-Item -Recurse .\haowallpaper-direct "$env:USERPROFILE\.codex\skills\"
 Copy-Item -Recurse .\wechat-article-layout "$env:USERPROFILE\.codex\skills\"
 Copy-Item -Recurse .\wechat-article-production "$env:USERPROFILE\.codex\skills\"
 Copy-Item -Recurse .\agnes-ai-generation "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\craft-poster-prompts "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\gpt-image-2 "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\mq-folded-page-illustrations "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\wechat-topic-radar "$env:USERPROFILE\.codex\skills\"
 ```
 
 macOS / Linux 可使用：
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -R extract-md writing-style-learner html-beautiful-output memory-learning-cards image-gen-moda mimo-tts haowallpaper-direct wechat-article-layout wechat-article-production agnes-ai-generation ~/.codex/skills/
+cp -R extract-md writing-style-learner html-beautiful-output memory-learning-cards image-gen-moda mimo-tts haowallpaper-direct wechat-article-layout wechat-article-production agnes-ai-generation craft-poster-prompts gpt-image-2 mq-folded-page-illustrations wechat-topic-radar ~/.codex/skills/
 ```
 
 ### 只下载某一个 Skill
@@ -82,9 +90,11 @@ git sparse-checkout set haowallpaper-direct
 git sparse-checkout set wechat-article-layout
 git sparse-checkout set wechat-article-production
 git sparse-checkout set agnes-ai-generation
+git sparse-checkout set craft-poster-prompts
+git sparse-checkout set gpt-image-2
+git sparse-checkout set mq-folded-page-illustrations
+git sparse-checkout set wechat-topic-radar
 ```
-
-也可以在 GitHub 页面点击 **Code → Download ZIP** 下载整个仓库，解压后只保留自己需要的那个 Skill 文件夹。把对应 Skill 文件夹复制到该客户端要求的 Skills 目录中。核心原则是：一个 Skill 保持一个完整文件夹，里面的 `SKILL.md`、`scripts/`、`references/` 等文件不要拆开。
 
 ## 运行依赖速查
 
@@ -100,6 +110,10 @@ git sparse-checkout set agnes-ai-generation
 | `wechat-article-layout` | 否 | 输出自包含 HTML 片段，无构建步骤 |
 | `wechat-article-production` | 是 | 需要 Python 用于 HTML 渲染脚本；其他增强功能（AI 新闻、风格学习、排版、图片生成）均为可选 |
 | `agnes-ai-generation` | 是 | 需要 Python 和 `requests`，以及 Agnes API Key |
+| `craft-poster-prompts` | 否 | 主要依赖 Agent 按构图模板生成提示词，无脚本依赖 |
+| `gpt-image-2` | 是 | 需要 Python 和本地 `codex` CLI 登录（ChatGPT Plus/Pro 订阅） |
+| `mq-folded-page-illustrations` | 否 | 主要依赖 Agent 按风格规范生成配图提示词，无脚本依赖 |
+| `wechat-topic-radar` | 是 | 需要 Python，脚本从公开热搜源采集数据 |
 
 ## Skill 说明
 
@@ -264,6 +278,62 @@ python scripts/agnes_video.py --prompt "Animate the character with subtle breath
 
 使用前需要配置 Agnes API Key。推荐使用环境变量 `AGNES_API_KEY`，不要提交真实密钥。
 
+### craft-poster-prompts
+
+`craft-poster-prompts` 用于创建、适配和维护专业 AI 海报设计提示词。它内置 8 种构图系统（三分法、对称、动态对角线、双焦点、菱形、视觉韵律、放射、密度对比）和 7 大场景模块（产品、美食、编辑人像、活动、文化、排版、品牌），让 Agent 可以根据沟通意图选择合适的构图，再结合场景模块生成生产级提示词。
+
+它体现的是**提示词工程和视觉设计能力**：Skill 把构图逻辑、空间关系、色彩光影、材质质感、失败约束等维度结构化，让 Agent 不再凭感觉拼凑提示词，而是基于可复用的模板系统生成专业级海报设计指令。
+
+典型请求：
+
+```text
+帮我为这个产品活动生成一张海报提示词。
+用对称构图设计一张高端品牌海报的 AI 提示词。
+分析这张参考海报的构图，然后生成类似风格的新提示词。
+```
+
+### gpt-image-2
+
+`gpt-image-2` 通过本地 Codex CLI 调用 GPT Image 2 生成和编辑图片，复用用户现有的 ChatGPT Plus 或 Pro 订阅。支持文生图、图编辑、风格迁移和多参考图合成，无需额外 API Key。
+
+它体现的是**本地 CLI 集成和订阅复用能力**：Skill 封装了 Codex CLI 的调用方式、批量生成、输出路径管理等细节，让 Agent 可以稳定地通过用户的 ChatGPT 订阅生成图片资产。
+
+示例：
+
+```bash
+python scripts/gen.py --prompt "A futuristic city at sunset" --out city.png
+python scripts/gen.py --prompt "Watercolor style" --count 4 --out-dir ./outputs
+```
+
+使用前需要确保本地 `codex` CLI 已登录且 ChatGPT 订阅包含 Image 2 访问权限。
+
+### mq-folded-page-illustrations
+
+`mq-folded-page-illustrations` 生成 MQ 专属风格的中文正文配图。使用"折页员"IP 形象（米白色不对称折纸身体、黑色窄视窗、右上回形针、细肢体和低调的 MQ 朱印），将中文文章里的关键判断、流程、结构、状态或隐喻转成 16:9 横版手绘解释图。
+
+它体现的是**视觉 IP 建设和中文内容配图能力**：Skill 定义了完整的风格 DNA、折页员角色规范、构图模式和质量检查清单，让 Agent 可以生成风格统一、认知锚点明确、略带冷幽默的工作草图，而不是商业插画或 PPT 信息图。
+
+典型请求：
+
+```text
+给这篇文章配几张图，用折页员风格。
+分析这篇 Markdown 的配图策略，给出 shot list。
+画一张解释"知识闭环"概念的折页员配图。
+```
+
+### wechat-topic-radar
+
+`wechat-topic-radar` 从百度热搜、微博热搜、知乎热榜、微信热文、国内外新闻等公开来源采集信号，自动发现和排名微信公众号选题。脚本会筛选出具有读者贴近性、情绪张力、实用价值和可分享性的优质话题。
+
+它体现的是**热点发现和内容策划能力**：Skill 把多源数据采集、话题评分、风险过滤、角度拆解等环节封装成标准化流程，让 Agent 可以快速为公众号运营者提供 10 个有依据、有角度、有风格建议的选题方案。
+
+示例：
+
+```powershell
+python wechat-topic-radar\scripts\topic_radar.py --top 10 --format markdown
+python wechat-topic-radar\scripts\topic_radar.py --top 10 --format json --profile "AI职场公众号，读者是一二线城市25-38岁白领"
+```
+
 ## 目录结构
 
 ```text
@@ -293,22 +363,41 @@ python scripts/agnes_video.py --prompt "Animate the character with subtle breath
 │   └── scripts/
 ├── wechat-article-layout/
 │   ├── SKILL.md
+│   ├── agents/
 │   └── references/
 ├── wechat-article-production/
 │   ├── SKILL.md
+│   ├── agents/
 │   ├── references/
 │   └── scripts/
-└── agnes-ai-generation/
+├── agnes-ai-generation/
+│   ├── SKILL.md
+│   ├── agents/
+│   └── references/
+├── craft-poster-prompts/
+│   ├── SKILL.md
+│   ├── agents/
+│   └── references/
+├── gpt-image-2/
+│   ├── SKILL.md
+│   ├── agents/
+│   └── scripts/
+├── mq-folded-page-illustrations/
+│   ├── SKILL.md
+│   ├── agents/
+│   └── assets/
+└── wechat-topic-radar/
     ├── SKILL.md
-    ├── references/
-    └── scripts/
+    ├── agents/
+    └── references/
 ```
 
 ## 配置和安全
 
 - `image-gen-moda`、`mimo-tts` 和 `agnes-ai-generation` 需要 API Key。请使用自己的本地配置或环境变量。
+- `gpt-image-2` 需要本地 `codex` CLI 登录和有效的 ChatGPT Plus/Pro 订阅，无需额外 API Key。
 - 不建议把真实密钥提交到公开仓库。公开作品集里应只保留占位符、示例配置或说明文档。
-- `haowallpaper-direct` 只解析公开页面和公开媒体链接，不应尝试绕过受保护接口。
+- `haowallpaper-direct` 和 `wechat-topic-radar` 只解析公开页面和公开数据源，不应尝试绕过受保护接口。
 
 ## 结语
 
